@@ -36,25 +36,41 @@ def timeout(sock, user, secs=600):
 	act -- the action to perform
 """
 def loadCommands():
-	commandList = []
+	commandList = {}
 	with open("commands.csv", mode='r') as inputfile:
 		rows = []
 		for row in inputfile:
-			rows.append(row.rstrip('\n').split("|||"))
-		keys = rows[0]
-		for values in rows[1:]:
-			commandList.append(dict(zip(keys,values)))
+			#rows.append(row.rstrip('\n').split("|||"))
+			key = row.split("|||")[0]
+		#for values in rows[1:]:
+			value = row.split("|||")[1]
+			commandList[key] = value.rstrip('\n')
 	return commandList
-
 
 """
 	Write a NEW command|action pair to commands.csv file
 	Keyword arguments:
 	com -- the command key
 	act -- the action to perform
+	list -- key list
 	TODO:
 		Check that command key is unique!!
 """
-def newCommand(com, act):
-	with open("commands.csv", "a") as outfile:
-		outfile.write(com+"|||"+act)
+def newCommand(sock, com, act, klist):
+	if com in klist:
+		chat(sock, "Command already exists!")
+	else:
+		with open("commands.csv", "a") as outfile:
+			outfile.write(com+"|||"+act)
+
+"""
+	Execute command. The default is chat(s, value)
+	Keyword arguments:
+	com -- command key
+	act -- the action to perform
+"""
+def runCommand(sock, com, act):
+	if com == "!delete":
+		chat(sock, "delete placeholder")
+	else:
+		chat(sock, act)

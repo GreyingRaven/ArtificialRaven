@@ -20,7 +20,7 @@ try:
 	s.send("JOIN {}\r\n".format(config.CHAN).encode("utf-8"))
 	connected = True #Socket succefully connected
 	print("Connection to " + config.CHAN + " succesful")
-	print(command_list)
+	print(command_list.keys())
 except Exception as e:
 	print("Failed to connect:")
 	print(str(e))
@@ -40,7 +40,7 @@ def bot_loop():
 			for pat in pattern.BAN_PAT:
 				if re.match(pat, message):
 					utility.ban(s, username)					
-					utility.chat(s,"Tap, tap, tap. Nevermore. " username + " banned")
+					utility.chat(s,"Tap, tap, tap. Nevermore. " + username + " banned")
 					break
 			# Time out pattern check
 			for pat in pattern.TO_PAT:
@@ -48,12 +48,21 @@ def bot_loop():
 					utility.timeout(s, username)
 					utility.chat(s,"Caw caw! " + username + " silence! You know what you've done...")
 					break
-			# New command check
-			if re.match(r'^(![A-Z,a-z])\w+\s([A-Z,a-z])', message):
-				command = message.split(" ", 1)[0]
-				action = message.split(" ", 1)[1]
-				utility.newCommand(command, action)
-				print("A new command: " + command + " action: " + action)
+			# Command check
+			if re.match(r'^(![A-Z,a-z])\w', message):
+				# Check if command exists
+				if message.strip() in command_list:
+					utility.runCommand(s, message.strip(), command_list[message.strip()])
+				else:					
+					# New command check
+					if re.match(r'^(![A-Z,a-z])\w+\s([A-Z,a-z])', message):
+						command = message.split(" ", 1)[0]
+						action = message.split(" ", 1)[1]
+						utility.newCommand(s, command, action, command_list.keys())
+						command_list[command] = action
+						print("A new command: " + command + " action: " + action)					
+					else:
+						utility.chat(s, "Command doesn't exists")
 
 		time.sleep(1 / config.RATE)
 if __name__ == "__main__":
