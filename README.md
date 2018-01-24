@@ -4,6 +4,7 @@ Twitch admin bot, eventually will use deep learning to simulate human response. 
 Programmed in Python
 
 Based on the following tutorial:
+
 -Build your own Raspberry Pi Twitch Bot(https://pimylifeup.com/raspberry-pi-twitch-bot/)
 
 
