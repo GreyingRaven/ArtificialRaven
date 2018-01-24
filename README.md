@@ -5,8 +5,10 @@ Programmed in Python
 
 Based on the following tutorial:
 
--Build your own Raspberry Pi Twitch Bot(https://pimylifeup.com/raspberry-pi-twitch-bot/)
+- Build your own Raspberry Pi Twitch Bot(https://pimylifeup.com/raspberry-pi-twitch-bot/)
 
 
 
+
+# License
 GNU General Public License v3.0
