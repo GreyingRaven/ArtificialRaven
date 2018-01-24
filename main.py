@@ -1,10 +1,16 @@
 import config
 import utility
+import pattern
 import socket
 import time
+import csv
 import re
 
+
+
 CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
+
+command_list = utility.loadCommands()
 
 try:
 	s = socket.socket()
@@ -14,6 +20,7 @@ try:
 	s.send("JOIN {}\r\n".format(config.CHAN).encode("utf-8"))
 	connected = True #Socket succefully connected
 	print("Connection to " + config.CHAN + " succesful")
+	print(command_list)
 except Exception as e:
 	print("Failed to connect:")
 	print(str(e))
@@ -28,11 +35,26 @@ def bot_loop():
 		else:
 			username = re.search(r"\w+", response).group(0) 
 			message = CHAT_MSG.sub("", response)
-			print(username + ": " + response)
-			for pattern in config.BAN_PAT:
-				if re.match(pattern, message):
-					utility.ban(s, username)
+			print(username + ": " + message)
+			# Ban pattern check
+			for pat in pattern.BAN_PAT:
+				if re.match(pat, message):
+					utility.ban(s, username)					
+					utility.chat(s,"Tap, tap, tap. Nevermore. " username + " banned")
 					break
+			# Time out pattern check
+			for pat in pattern.TO_PAT:
+				if re.match(pat, message):
+					utility.timeout(s, username)
+					utility.chat(s,"Caw caw! " + username + " silence! You know what you've done...")
+					break
+			# New command check
+			if re.match(r'^(![A-Z,a-z])\w+\s([A-Z,a-z])', message):
+				command = message.split(" ", 1)[0]
+				action = message.split(" ", 1)[1]
+				utility.newCommand(command, action)
+				print("A new command: " + command + " action: " + action)
+
 		time.sleep(1 / config.RATE)
 if __name__ == "__main__":
 	bot_loop()

@@ -28,3 +28,33 @@ def ban(sock, user):
 """
 def timeout(sock, user, secs=600):
 	chat(sock, ".timeout {}".format(user, secs))
+
+"""
+	Load commands from commands.csv file
+	Keyword arguments:
+	com -- the command key
+	act -- the action to perform
+"""
+def loadCommands():
+	commandList = []
+	with open("commands.csv", mode='r') as inputfile:
+		rows = []
+		for row in inputfile:
+			rows.append(row.rstrip('\n').split("|||"))
+		keys = rows[0]
+		for values in rows[1:]:
+			commandList.append(dict(zip(keys,values)))
+	return commandList
+
+
+"""
+	Write a NEW command|action pair to commands.csv file
+	Keyword arguments:
+	com -- the command key
+	act -- the action to perform
+	TODO:
+		Check that command key is unique!!
+"""
+def newCommand(com, act):
+	with open("commands.csv", "a") as outfile:
+		outfile.write(com+"|||"+act)
